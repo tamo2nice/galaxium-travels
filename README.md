@@ -157,13 +157,6 @@ cd booking_system_frontend
 npm run build
 ```
 
-### Current Known Issues
-- Backend tests still contain fixtures that create `Flight` and `Booking` records without the new required seat-class fields.
-- Seed data can create bookings without decrementing the related seat-class inventory.
-- Booking history UI can still show the legacy economy fallback price instead of `price_paid` for premium bookings.
-
-Fix these before treating the current seat-class implementation as production-ready.
-
 ## 📦 Production Deployment
 
 ### Backend

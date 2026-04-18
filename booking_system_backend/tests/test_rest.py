@@ -24,7 +24,13 @@ class TestFlightsEndpoint:
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            seats_available=5,
+            economy_price=1000000,
+            business_price=2000000,
+            galaxium_price=4000000,
+            economy_seats=5,
+            business_seats=3,
+            galaxium_seats=1
         ))
         db_session.commit()
 
@@ -102,7 +108,13 @@ class TestBookEndpoint:
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            seats_available=5,
+            economy_price=1000000,
+            business_price=2000000,
+            galaxium_price=4000000,
+            economy_seats=5,
+            business_seats=3,
+            galaxium_seats=1
         ))
         db_session.commit()
         flight = db_session.query(Flight).first()
@@ -152,7 +164,13 @@ class TestBookingsEndpoint:
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=5
+            seats_available=5,
+            economy_price=1000000,
+            business_price=2000000,
+            galaxium_price=4000000,
+            economy_seats=5,
+            business_seats=3,
+            galaxium_seats=1
         ))
         db_session.commit()
         flight = db_session.query(Flight).first()
@@ -161,7 +179,9 @@ class TestBookingsEndpoint:
             user_id=user_id,
             flight_id=flight.flight_id,
             status="booked",
-            booking_time="2099-01-01T10:00:00Z"
+            booking_time="2099-01-01T10:00:00Z",
+            seat_class="economy",
+            price_paid=1000000
         ))
         db_session.commit()
 
@@ -194,7 +214,13 @@ class TestCancelEndpoint:
             departure_time="2099-01-01T09:00:00Z",
             arrival_time="2099-01-01T17:00:00Z",
             price=1000000,
-            seats_available=4
+            seats_available=4,
+            economy_price=1000000,
+            business_price=2000000,
+            galaxium_price=4000000,
+            economy_seats=4,
+            business_seats=3,
+            galaxium_seats=1
         ))
         db_session.commit()
         flight = db_session.query(Flight).first()
@@ -203,7 +229,9 @@ class TestCancelEndpoint:
             user_id=user_id,
             flight_id=flight.flight_id,
             status="booked",
-            booking_time="2099-01-01T10:00:00Z"
+            booking_time="2099-01-01T10:00:00Z",
+            seat_class="economy",
+            price_paid=1000000
         ))
         db_session.commit()
         booking = db_session.query(Booking).first()

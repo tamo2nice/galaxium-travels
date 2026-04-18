@@ -85,7 +85,14 @@ def sample_flight_data():
         "departure_time": "2099-01-01T09:00:00Z",
         "arrival_time": "2099-01-01T17:00:00Z",
         "price": 1000000,
-        "seats_available": 5
+        "seats_available": 5,
+        # Seat class specific fields
+        "economy_price": 1000000,
+        "business_price": 2000000,
+        "galaxium_price": 4000000,
+        "economy_seats": 5,
+        "business_seats": 3,
+        "galaxium_seats": 1
     }
 
 
@@ -95,5 +102,6 @@ def sample_booking_data():
     return {
         "user_id": 1,
         "name": "Test User",
-        "flight_id": 1
+        "flight_id": 1,
+        "seat_class": "economy"
     }

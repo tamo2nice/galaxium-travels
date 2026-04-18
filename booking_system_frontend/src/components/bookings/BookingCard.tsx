@@ -1,7 +1,8 @@
 import type { Booking, Flight } from '../../types';
 import { Card, Button } from '../common';
-import { Plane, Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Plane, Calendar, CheckCircle, XCircle, Clock, Armchair } from 'lucide-react';
 import { formatDate, formatCurrency } from '../../utils/formatters';
+import { getSeatClassDisplay } from '../../utils/seatClasses';
 import { motion } from 'framer-motion';
 
 interface BookingCardProps {
@@ -91,11 +92,22 @@ export const BookingCard = ({ booking, flight, onCancel, isCancelling }: Booking
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-3 border-t border-white/10">
-              <span className="text-sm text-star-white/60">Price</span>
-              <span className="text-lg font-bold text-star-white">
-                {formatCurrency(flight.price)}
-              </span>
+            <div className="space-y-2 pt-3 border-t border-white/10">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-star-white/60">Seat Class</span>
+                <div className="flex items-center gap-2">
+                  <Armchair size={16} className="text-star-white/60" />
+                  <span className="text-sm font-medium text-star-white capitalize">
+                    {getSeatClassDisplay(booking.seat_class).label}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-star-white/60">Price Paid</span>
+                <span className="text-lg font-bold text-star-white">
+                  {formatCurrency(booking.price_paid)}
+                </span>
+              </div>
             </div>
           </div>
         ) : (

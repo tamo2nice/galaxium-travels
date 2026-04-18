@@ -83,7 +83,21 @@ def seed():
         user_id = random.choice(user_ids)
         flight = random.choice(flights_list)
         status = random.choice(statuses)
-        seat_class = random.choice(seat_classes)
+        
+        # 利用可能な座席クラスから選択（在庫がある場合のみ）
+        available_classes = []
+        if flight.economy_seats > 0:
+            available_classes.append("economy")
+        if flight.business_seats > 0:
+            available_classes.append("business")
+        if flight.galaxium_seats > 0:
+            available_classes.append("galaxium")
+        
+        # 在庫がない場合はスキップ
+        if not available_classes:
+            continue
+            
+        seat_class = random.choice(available_classes)
         booking_time = (now - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23))).isoformat() + "Z"
         
         # 座席クラスに応じた価格を取得
@@ -94,6 +108,19 @@ def seed():
         else:  # galaxium
             price_paid = flight.galaxium_price
         
+        # 予約がアクティブ（booked）の場合のみ在庫を減らす
+        if status == "booked":
+            if seat_class == "economy":
+                flight.economy_seats -= 1
+            elif seat_class == "business":
+                flight.business_seats -= 1
+            else:  # galaxium
+                flight.galaxium_seats -= 1
+            
+            # 後方互換性のため、economyの場合はseats_availableも更新
+            if seat_class == "economy":
+                flight.seats_available -= 1
+        
         bookings.append(Booking(
             user_id=user_id,
             flight_id=flight.flight_id,
@@ -102,6 +129,7 @@ def seed():
             seat_class=seat_class,
             price_paid=price_paid
         ))
+    
     db.add_all(bookings)
     db.commit()
     db.close()
