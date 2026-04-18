@@ -6,6 +6,7 @@ A complete full-stack application for booking interplanetary space travel, featu
 
 - **Modern Space-Themed UI** - Beautiful, responsive interface with animated starfield
 - **Full Booking System** - Browse flights, make bookings, manage reservations
+- **Seat Classes** - Economy, Business, and Galaxium pricing and availability
 - **Dual Protocol Backend** - REST API and MCP (Model Context Protocol) support
 - **Type-Safe** - Full TypeScript frontend and Python type hints
 - **Real-Time Updates** - Live flight availability and booking status
@@ -109,15 +110,17 @@ See [booking_system_frontend/README.md](booking_system_frontend/README.md) for:
 
 1. **Browse Flights** - Navigate to the Flights page to see all available routes
 2. **Search & Filter** - Use the search bar to find specific destinations
-3. **Sign In/Register** - Click "Book Now" and enter your name and email
-4. **Confirm Booking** - Review flight details and confirm your reservation
-5. **Manage Bookings** - View and cancel bookings from "My Bookings" page
+3. **Choose Seat Class** - Select Economy, Business, or Galaxium before booking
+4. **Sign In/Register** - Click "Book" and enter your name and email
+5. **Confirm Booking** - Review flight details, amenities, and class price
+6. **Manage Bookings** - View and cancel bookings from "My Bookings" page
 
 ### Demo Data
 
 The system comes pre-seeded with:
 - **10 Users** - Alice, Bob, Charlie, Diana, Eve, Frank, Grace, Heidi, Ivan, Judy
 - **10 Flights** - Routes between Earth, Mars, Moon, Venus, Jupiter, Europa, Pluto
+- **Seat Class Inventory** - Economy, Business, and Galaxium price/seat data per flight
 - **20 Sample Bookings** - Various booking statuses
 
 ## 🛠️ Technology Stack
@@ -153,6 +156,13 @@ pytest
 cd booking_system_frontend
 npm run build
 ```
+
+### Current Known Issues
+- Backend tests still contain fixtures that create `Flight` and `Booking` records without the new required seat-class fields.
+- Seed data can create bookings without decrementing the related seat-class inventory.
+- Booking history UI can still show the legacy economy fallback price instead of `price_paid` for premium bookings.
+
+Fix these before treating the current seat-class implementation as production-ready.
 
 ## 📦 Production Deployment
 
@@ -190,6 +200,25 @@ colors: {
   // Add your colors
 }
 ```
+
+## 🧠 Agent Operation Notes
+
+- `internal-monologue/` ディレクトリを作成済みです。
+- 各インタラクション要約を保存する運用を行う場合、参照優先されるエージェントルールファイルへ同ルールを反映する必要があります。
+- 推奨ファイル: `.bob/rules-code/AGENTS.md`
+- 推奨ファイル名形式: `YYYY-MM-DD_簡潔な説明.md`
+- 例: `2026-04-18_update-readme.md`
+
+## 🐛 Troubleshooting
+
+## 📝 Recent Review Summary
+
+Latest review findings for commit `f5804f58f6c4173f2b3f93e0549b713f7c6c148f`:
+- Required backend schema changes were introduced without updating all tests/fixtures.
+- Seeded bookings can leave seat inventory inconsistent.
+- My Bookings can display the wrong amount for Business/Galaxium reservations.
+
+These items were added to Bob Findings and should be resolved before release.
 
 ## 🐛 Troubleshooting
 
