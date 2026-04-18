@@ -68,53 +68,55 @@ export const BookingCard = ({ booking, flight, onCancel, isCancelling }: Booking
         </div>
 
         {/* Flight Details */}
-        {flight ? (
-          <div className="space-y-3 mb-4">
-            <div>
-              <h3 className="text-xl font-bold text-star-white mb-1">
-                {flight.origin} → {flight.destination}
-              </h3>
-              <p className="text-sm text-star-white/60">Flight #{flight.flight_id}</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-3 mb-4">
+          {flight ? (
+            <>
               <div>
-                <p className="text-xs text-star-white/60 mb-1">Departure</p>
-                <p className="text-sm text-star-white font-medium">
-                  {formatDate(flight.departure_time)}
-                </p>
+                <h3 className="text-xl font-bold text-star-white mb-1">
+                  {flight.origin} → {flight.destination}
+                </h3>
+                <p className="text-sm text-star-white/60">Flight #{flight.flight_id}</p>
               </div>
-              <div>
-                <p className="text-xs text-star-white/60 mb-1">Arrival</p>
-                <p className="text-sm text-star-white font-medium">
-                  {formatDate(flight.arrival_time)}
-                </p>
-              </div>
-            </div>
 
-            <div className="space-y-2 pt-3 border-t border-white/10">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-star-white/60">Seat Class</span>
-                <div className="flex items-center gap-2">
-                  <Armchair size={16} className="text-star-white/60" />
-                  <span className="text-sm font-medium text-star-white capitalize">
-                    {getSeatClassDisplay(booking.seat_class).label}
-                  </span>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-star-white/60 mb-1">Departure</p>
+                  <p className="text-sm text-star-white font-medium">
+                    {formatDate(flight.departure_time)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-star-white/60 mb-1">Arrival</p>
+                  <p className="text-sm text-star-white font-medium">
+                    {formatDate(flight.arrival_time)}
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-star-white/60">Price Paid</span>
-                <span className="text-lg font-bold text-star-white">
-                  {formatCurrency(booking.price_paid)}
+            </>
+          ) : (
+            <div>
+              <p className="text-sm text-star-white/60">Flight ID: {booking.flight_id}</p>
+            </div>
+          )}
+
+          <div className="space-y-2 pt-3 border-t border-white/10">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-star-white/60">Seat Class</span>
+              <div className="flex items-center gap-2">
+                <Armchair size={16} className="text-star-white/60" />
+                <span className="text-sm font-medium text-star-white capitalize">
+                  {getSeatClassDisplay(booking.seat_class).label}
                 </span>
               </div>
             </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-star-white/60">Price Paid</span>
+              <span className="text-lg font-bold text-star-white">
+                {formatCurrency(booking.price_paid)}
+              </span>
+            </div>
           </div>
-        ) : (
-          <div className="mb-4">
-            <p className="text-sm text-star-white/60">Flight ID: {booking.flight_id}</p>
-          </div>
-        )}
+        </div>
 
         {/* Booking Time */}
         <div className="flex items-center gap-2 text-sm text-star-white/60 mb-4">

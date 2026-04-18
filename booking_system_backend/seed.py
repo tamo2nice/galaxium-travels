@@ -1,9 +1,11 @@
+from typing import cast
 from models import Base, User, Flight, Booking
 from db import engine, SessionLocal
 from datetime import datetime, timedelta
 import random
 
 def seed():
+    """Seed demo users, flights, and a fixed number of inventory-safe bookings."""
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     # Clear existing data
@@ -79,27 +81,34 @@ def seed():
     bookings = []
     now = datetime.utcnow()
     
-    for i in range(20):
+    target_booking_count = 20
+
+    while len(bookings) < target_booking_count:
+        bookable_flights = [
+            flight for flight in flights_list
+            if cast(int, flight.economy_seats) > 0
+            or cast(int, flight.business_seats) > 0
+            or cast(int, flight.galaxium_seats) > 0
+        ]
+        if not bookable_flights:
+            raise ValueError(f"Unable to create {target_booking_count} bookings with current seed inventory.")
+
         user_id = random.choice(user_ids)
-        flight = random.choice(flights_list)
+        flight = random.choice(bookable_flights)
         status = random.choice(statuses)
-        
+
         # 利用可能な座席クラスから選択（在庫がある場合のみ）
         available_classes = []
-        if flight.economy_seats > 0:
+        if cast(int, flight.economy_seats) > 0:
             available_classes.append("economy")
-        if flight.business_seats > 0:
+        if cast(int, flight.business_seats) > 0:
             available_classes.append("business")
-        if flight.galaxium_seats > 0:
+        if cast(int, flight.galaxium_seats) > 0:
             available_classes.append("galaxium")
-        
-        # 在庫がない場合はスキップ
-        if not available_classes:
-            continue
-            
+
         seat_class = random.choice(available_classes)
         booking_time = (now - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23))).isoformat() + "Z"
-        
+
         # 座席クラスに応じた価格を取得
         if seat_class == "economy":
             price_paid = flight.economy_price
@@ -107,19 +116,19 @@ def seed():
             price_paid = flight.business_price
         else:  # galaxium
             price_paid = flight.galaxium_price
-        
+
         # 予約がアクティブ（booked）の場合のみ在庫を減らす
         if status == "booked":
             if seat_class == "economy":
-                flight.economy_seats -= 1
+                setattr(flight, "economy_seats", cast(int, flight.economy_seats) - 1)
             elif seat_class == "business":
-                flight.business_seats -= 1
+                setattr(flight, "business_seats", cast(int, flight.business_seats) - 1)
             else:  # galaxium
-                flight.galaxium_seats -= 1
-            
+                setattr(flight, "galaxium_seats", cast(int, flight.galaxium_seats) - 1)
+
             # 後方互換性のため、economyの場合はseats_availableも更新
             if seat_class == "economy":
-                flight.seats_available -= 1
+                setattr(flight, "seats_available", cast(int, flight.seats_available) - 1)
         
         bookings.append(Booking(
             user_id=user_id,
