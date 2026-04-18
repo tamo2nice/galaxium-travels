@@ -1,24 +1,29 @@
 import { useState } from 'react';
-import type { Flight } from '../../types';
+import type { Flight, SeatClass } from '../../types';
 import { Modal, Button } from '../common';
 import { Plane, Calendar, Clock, DollarSign } from 'lucide-react';
 import { formatCurrency, formatDate, calculateDuration } from '../../utils/formatters';
 import { bookFlight, isErrorResponse } from '../../services/api';
 import { useUser } from '../../hooks/useUser';
+import { getSeatClassDisplay, getAmenitiesForClass } from '../../utils/seatClasses';
 import toast from 'react-hot-toast';
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   flight: Flight | null;
+  seatClass: SeatClass;
   onSuccess: () => void;
 }
 
-export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModalProps) => {
+export const BookingModal = ({ isOpen, onClose, flight, seatClass, onSuccess }: BookingModalProps) => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
 
   if (!flight) return null;
+
+  const classInfo = flight[seatClass as keyof Pick<Flight, 'economy' | 'business' | 'galaxium'>];
+  const display = getSeatClassDisplay(seatClass);
 
   const handleConfirmBooking = async () => {
     if (!user) {
@@ -33,6 +38,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
         user_id: user.user_id,
         name: user.name,
         flight_id: flight.flight_id,
+        seat_class: seatClass,
       });
 
       if (isErrorResponse(result)) {
@@ -40,7 +46,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
         return;
       }
 
-      toast.success('Flight booked successfully!');
+      toast.success(`${display.label} class booked successfully!`);
       onSuccess();
       onClose();
     } catch (error: any) {
@@ -110,6 +116,33 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
           </div>
         </div>
 
+        {/* Seat Class Details */}
+        <div className="glass-card p-4 bg-white/5 border-2 border-cosmic-purple/50">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-3xl">{display.icon}</span>
+            <div>
+              <h4 className={`font-semibold ${display.color}`}>
+                {display.label} Class
+              </h4>
+              <p className="text-xs text-star-white/60">
+                {display.description}
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-3 pt-3 border-t border-star-white/10">
+            <h5 className="text-sm font-semibold mb-2 text-star-white/70">Included Amenities</h5>
+            <ul className="text-sm text-star-white/70 space-y-1">
+              {getAmenitiesForClass(seatClass).map((amenity, index) => (
+                <li key={index} className="flex items-center gap-2">
+                  <span className="text-cosmic-purple">✓</span>
+                  {amenity}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
         {/* Passenger Info */}
         {user && (
           <div className="glass-card p-4 bg-white/5">
@@ -128,7 +161,7 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
             <span className="text-white font-semibold">Total Price</span>
           </div>
           <span className="text-2xl font-bold text-white">
-            {formatCurrency(flight.price)}
+            {formatCurrency(classInfo.price)}
           </span>
         </div>
 

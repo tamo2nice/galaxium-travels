@@ -1,13 +1,29 @@
 // API Data Models matching backend schemas
 
+// 座席クラス情報
+export interface SeatClassInfo {
+  price: number;
+  seats_available: number;
+}
+
+// 座席クラスの型
+export type SeatClass = 'economy' | 'business' | 'galaxium';
+
 export interface Flight {
   flight_id: number;
   origin: string;
   destination: string;
   departure_time: string;
   arrival_time: string;
+  
+  // 後方互換性のため保持
   price: number;
   seats_available: number;
+  
+  // 座席クラス別情報
+  economy: SeatClassInfo;
+  business: SeatClassInfo;
+  galaxium: SeatClassInfo;
 }
 
 export interface Booking {
@@ -16,6 +32,8 @@ export interface Booking {
   flight_id: number;
   status: 'booked' | 'cancelled' | 'completed';
   booking_time: string;
+  seat_class: SeatClass;
+  price_paid: number;
 }
 
 export interface User {
@@ -29,6 +47,7 @@ export interface BookingRequest {
   user_id: number;
   name: string;
   flight_id: number;
+  seat_class?: SeatClass;
 }
 
 export interface UserRegistration {
@@ -61,6 +80,15 @@ export interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   logout: () => void;
+}
+
+// 座席クラス表示用の情報
+export interface SeatClassDisplay {
+  value: SeatClass;
+  label: string;
+  description: string;
+  icon: string;
+  color: string;
 }
 
 // Made with Bob
